@@ -10,28 +10,13 @@ import { useEffect, useState } from "react";
 import data from "./data.js";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import DetailPage from "./routes/DetailPage.js";
+import axios from "axios";
 
 function App() {
   let [product, setProduct] = useState(data);
   let navigate = useNavigate();
 
-  useEffect(() => {
-    fetch("https://codingapple1.github.io/shop/data2.json")
-      .then((res) => res.json())
-      .then((res) => {
-        let copy = [...product];
-
-        res.forEach((item) => {
-          item.title = `시루${item.id}`;
-          item.content = `시루특공대 넘버${item.id}`;
-          item.price = Number(`${item.id}0000`);
-
-          copy.push(item);
-        });
-
-        setProduct(copy);
-      });
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div className="App">
@@ -44,6 +29,42 @@ function App() {
               <Banner />
               <SortingButton product={data} setProduct={setProduct} />
               <ProductList product={product} />
+              <button
+                onClick={() => {
+                  axios
+                    .get("https://codingapple1.github.io/shop/data2.json")
+                    .then((res) => res.data)
+                    .then((res) => {
+                      let copy = [...product];
+                      res.forEach((item) => {
+                        item.title = `시루${item.id}`;
+                        item.content = `시루특공대 넘버${item.id}`;
+                        item.price = Number(`${item.id}0000`);
+
+                        copy.push(item);
+
+                        setProduct(copy);
+                      });
+                    });
+
+                  // fetch("https://codingapple1.github.io/shop/data2.json")
+                  //   .then((res) => res.json())
+                  //   .then((res) => {
+                  //     let copy = [...product];
+                  //     res.forEach((item) => {
+                  //       item.title = `시루${item.id}`;
+                  //       item.content = `시루특공대 넘버${item.id}`;
+                  //       item.price = Number(`${item.id}0000`);
+
+                  //       copy.push(item);
+
+                  //       setProduct(copy);
+                  //   });
+                  // });
+                }}
+              >
+                버튼
+              </button>
             </>
           }
         />
