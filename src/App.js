@@ -8,8 +8,8 @@ import bg from "./img/신세계.png";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import 시루 from "./img/시루.jpg";
-// import 변한다 from "./img/변한다.png";
-// import 등산 from "./img/등산.png";
+import 변한다 from "./img/변한다.png";
+import 등산 from "./img/등산.png";
 
 function App() {
   return (
