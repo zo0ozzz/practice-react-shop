@@ -4,51 +4,124 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import bg from "./img/신세계.png";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import 시루 from "./img/시루.jpg";
-import 변한다 from "./img/변한다.png";
-import 등산 from "./img/등산.png";
+import { useEffect, useState } from "react";
+import data from "./data.js";
+import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
+import DetailPage from "./routes/DetailPage.js";
 
 function App() {
+  let [product, setProduct] = useState(data);
+  let navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("https://codingapple1.github.io/shop/data2.json")
+      .then((res) => res.json())
+      .then((res) => {
+        let copy = [...product];
+
+        res.forEach((item) => {
+          item.title = `시루${item.id}`;
+          item.content = `시루특공대 넘버${item.id}`;
+          item.price = Number(`${item.id}0000`);
+
+          copy.push(item);
+        });
+
+        setProduct(copy);
+      });
+  }, []);
+
   return (
     <div className="App">
-      <Navbar bg="dark" variant="dark">
-        <Container>
-          <Navbar.Brand href="#home">즉시쇼핑</Navbar.Brand>
-          <Nav className="me-auto">
-            <Nav.Link href="#home">홈</Nav.Link>
-            <Nav.Link href="#features">장바구니</Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <NavBar />
+              <Banner />
+              <SortingButton product={data} setProduct={setProduct} />
+              <ProductList product={product} />
+            </>
+          }
+        />
 
-      <div
-        className="main-bg"
-        style={{ backgroundImage: "url(" + bg + ")" }}
-      ></div>
+        <Route
+          path="/detail/:id"
+          element={
+            <>
+              <NavBar />
+              <DetailPage product={data} />
+            </>
+          }
+        />
 
-      <Container>
-        <Row className="상품들">
-          <Col sm className="상품">
-            <img src="/img/시루.jpg" alt="" />
-            <h4>상품1</h4>
-            <p>상품 설명</p>
-          </Col>
-          <Col sm className="상품">
-            <img src={시루} alt="" />
-            <h4>상품2</h4>
-            <p>상품 설명</p>
-          </Col>
-          <Col sm className="상품">
-            <img src={시루} alt="" />
-            <h4>상품3</h4>
-            <p>상품 설명</p>
-          </Col>
-        </Row>
-      </Container>
+        <Route path="*" element={<div>없는 페이지입니다.</div>} />
+      </Routes>
     </div>
+  );
+}
+
+function NavBar() {
+  let navigate = useNavigate();
+
+  return (
+    <Navbar bg="dark" variant="dark" className="navBar">
+      <Navbar.Brand href="#home">즉시쇼핑</Navbar.Brand>
+      <Nav className="me-auto">
+        <Nav.Link onClick={() => navigate("/")}>홈</Nav.Link>
+        <Nav.Link onClick={() => navigate("/detail")}>상세 페이지</Nav.Link>
+      </Nav>
+    </Navbar>
+  );
+}
+
+function Banner() {
+  return (
+    <div
+      className="main-bg"
+      style={{ backgroundImage: "url(/img/신세계.png)" }}
+    ></div>
+  );
+}
+
+function ProductList(props) {
+  let arr = [];
+
+  props.product.map((item, index) => {
+    arr.push(
+      <Link to={`/detail/${item.id}`} className="상품" key={item.id}>
+        <Col sm>
+          <img src={`/img/시루0.jpg`} alt={`상품${item.id}`} />
+          <h4 style={{ fontSize: "120%" }}>{item.title}</h4>
+          <p>{item.content}</p>
+          <p>{item.price.toLocaleString()}원</p>
+        </Col>
+      </Link>
+    );
+  });
+
+  return (
+    <Container className="productList">
+      <Row className="상품들">{arr}</Row>
+    </Container>
+  );
+}
+
+function SortingButton(props) {
+  return (
+    <button
+      onClick={() => {
+        let copy = [...props.product];
+        copy.sort((a, b) => b.id - a.id);
+
+        props.setProduct(copy);
+      }}
+    >
+      재정렬
+    </button>
   );
 }
 

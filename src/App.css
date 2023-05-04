@@ -132,19 +132,29 @@ table {
   box-sizing: border-box;
 }
 
+.navBar {
+  padding-left: 20px;
+}
+
 .main-bg {
   height: 300px;
   background-size: cover;
   background-position: center;
 }
 
+.productList {
+  width: 100%;
+}
+
 .상품들 {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .상품 {
+  width: 33%;
   text-align: center;
 }
 
