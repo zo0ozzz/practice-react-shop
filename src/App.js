@@ -12,6 +12,11 @@ import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import DetailPage from "./routes/DetailPage.js";
 import axios from "axios";
 import Cart from "./routes/Cart.js";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 
 export let Context1 = createContext();
 
@@ -23,7 +28,11 @@ function App() {
   let [buttonState, setButtonState] = useState(false);
   let [stock, setStock] = useState([10, 11, 12]);
 
-  useEffect(() => {}, []);
+  let result = useQuery(["userInformation"], () =>
+    axios
+      .get("https://codingapple1.github.io/userdata.json")
+      .then((res) => res.data)
+  );
 
   return (
     <div className="App">
@@ -32,7 +41,7 @@ function App() {
           path="/"
           element={
             <>
-              <NavBar />
+              <NavBar result={result} />
               <Banner />
               <SortingButton product={data} setProduct={setProduct} />
               <ProductList product={product} />
@@ -40,8 +49,6 @@ function App() {
               <button
                 disabled={buttonState}
                 onClick={() => {
-                  console.log(count);
-
                   function ajax(i) {
                     axios
                       .get(`https://codingapple1.github.io/shop/data${i}.json`)
@@ -55,6 +62,7 @@ function App() {
                           item.price = Number(`${item.id}0000`);
 
                           copy.push(item);
+                          data.push(item);
 
                           setProduct(copy);
                         });
@@ -106,7 +114,7 @@ function App() {
   );
 }
 
-function NavBar() {
+function NavBar({ result }) {
   let navigate = useNavigate();
 
   return (
@@ -115,6 +123,9 @@ function NavBar() {
       <Nav className="me-auto">
         <Nav.Link onClick={() => navigate("/")}>홈</Nav.Link>
         <Nav.Link onClick={() => navigate("/cart")}>장바구니</Nav.Link>
+      </Nav>
+      <Nav className="ms-auto" style={{ color: "white" }}>
+        {/* 반가워요 {result.isLoding ? "로딩 중" : "웅비"} */}
       </Nav>
     </Navbar>
   );

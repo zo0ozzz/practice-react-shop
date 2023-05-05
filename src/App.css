@@ -170,3 +170,9 @@ img {
   opacity: 1;
   transition: all 1s;
 }
+
+th,
+tr,
+td {
+  border: solid 1px;
+}

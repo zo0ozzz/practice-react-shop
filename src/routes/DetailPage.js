@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
 import { Context1 } from "./../App.js";
+import { useDispatch, useSelector } from "react-redux";
+import { plusProductInCart } from "./../store/inCartSlice.js";
 
 // import styled from "styled-components";
 
@@ -14,6 +16,8 @@ function DetailPage(props) {
   const [inputValue, setInputValue] = useState("");
   const [tab, setTab] = useState(0);
   const [fade, setFade] = useState("end");
+  // const inCart = useSelector((state) => state.inCart);
+  let dispatch = useDispatch();
 
   useEffect(() => {
     if (isNaN(inputValue)) {
@@ -52,7 +56,17 @@ function DetailPage(props) {
             }}
           />{" "}
           <br />
-          <button className="btn btn-danger">주문하기</button>
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              let { id, title: name } = findProudct;
+              let count = inputValue;
+              console.log(id, name, count);
+              dispatch(plusProductInCart({ id, name, count }));
+            }}
+          >
+            주문하기
+          </button>
         </div>
       </div>
       <div>
