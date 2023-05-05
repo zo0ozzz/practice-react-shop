@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
+import { Context1 } from "./../App.js";
 
 // import styled from "styled-components";
 
 function DetailPage(props) {
+  let { stock, product } = useContext(Context1);
+
   const { id } = useParams();
   const findProudct = props.product.find((item) => item.id === Number(id));
   const [display, setDisplay] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [tab, setTab] = useState(0);
+  const [fade, setFade] = useState("end");
 
   useEffect(() => {
     if (isNaN(inputValue)) {
@@ -17,10 +21,19 @@ function DetailPage(props) {
     } else {
       setDisplay(false);
     }
-  }, [inputValue]);
+
+    let a = setTimeout(() => {
+      setFade("end");
+    }, 100);
+
+    return () => {
+      clearTimeout(a);
+      setFade("");
+    };
+  }, [inputValue, tab]);
 
   return (
-    <div className="container">
+    <div className={`container start ${fade}`}>
       <div className="row">
         <div className="col-md-6">
           <img src={`/img/시루0.jpg`} width="100%" />
@@ -39,46 +52,45 @@ function DetailPage(props) {
             }}
           />{" "}
           <br />
-          <button className="btn btn-danger start end">주문하기</button>
+          <button className="btn btn-danger">주문하기</button>
         </div>
       </div>
       <div>
         <ListExample setTab={setTab} />
-        <button
-          onClick={() => {
-            setTab(0);
-          }}
-        >
-          하나
-        </button>
-        <button
-          onClick={() => {
-            setTab(1);
-          }}
-        >
-          둘
-        </button>
-        <button
-          onClick={() => {
-            setTab(2);
-          }}
-        >
-          셋
-        </button>
-        <Div content={tab}></Div>
+
+        <Div
+          product={props.product}
+          tab={tab}
+          fade={fade}
+          setFade={setFade}
+        ></Div>
       </div>
+      {stock}
     </div>
   );
 }
 
-function Div(props) {
-  if (props.content == 0) {
-    return <div>{props.content}</div>;
-  } else if (props.content == 1) {
-    return <div>{props.content}</div>;
-  } else if (props.content == 2) {
-    return <div>{props.content}</div>;
-  }
+function Div({ product, tab, fade, setFade }) {
+  let { stock } = useContext(Context1);
+  useEffect(() => {
+    let a = setTimeout(() => {
+      setFade("end");
+    }, 100);
+
+    return () => {
+      setFade("");
+    };
+  }, [tab]);
+
+  return (
+    <div className={`start ${fade}`}>
+      {
+        [<div>{product[0].content}</div>, <div>{stock}</div>, <div>3333</div>][
+          tab
+        ]
+      }
+    </div>
+  );
 }
 
 function ListExample({ setTab }) {

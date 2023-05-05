@@ -6,11 +6,14 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import data from "./data.js";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import DetailPage from "./routes/DetailPage.js";
 import axios from "axios";
+import Cart from "./routes/Cart.js";
+
+export let Context1 = createContext();
 
 function App() {
   let [product, setProduct] = useState(data);
@@ -18,6 +21,7 @@ function App() {
   let [count, setCount] = useState(0);
   let [buttonName, setButtonName] = useState("더 보기");
   let [buttonState, setButtonState] = useState(false);
+  let [stock, setStock] = useState([10, 11, 12]);
 
   useEffect(() => {}, []);
 
@@ -78,13 +82,25 @@ function App() {
           path="/detail/:id"
           element={
             <>
-              <NavBar />
-              <DetailPage product={data} />
+              <Context1.Provider value={{ stock, product }}>
+                <NavBar />
+                <DetailPage product={data} />
+              </Context1.Provider>
             </>
           }
         />
 
         <Route path="*" element={<div>없는 페이지입니다.</div>} />
+
+        <Route
+          path="/cart"
+          element={
+            <>
+              <NavBar />
+              <Cart />
+            </>
+          }
+        ></Route>
       </Routes>
     </div>
   );
@@ -98,7 +114,7 @@ function NavBar() {
       <Navbar.Brand href="#home">즉시쇼핑</Navbar.Brand>
       <Nav className="me-auto">
         <Nav.Link onClick={() => navigate("/")}>홈</Nav.Link>
-        <Nav.Link onClick={() => navigate("/detail")}>상세 페이지</Nav.Link>
+        <Nav.Link onClick={() => navigate("/cart")}>장바구니</Nav.Link>
       </Nav>
     </Navbar>
   );
