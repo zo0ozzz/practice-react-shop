@@ -15,6 +15,9 @@ import axios from "axios";
 function App() {
   let [product, setProduct] = useState(data);
   let navigate = useNavigate();
+  let [count, setCount] = useState(0);
+  let [buttonName, setButtonName] = useState("더 보기");
+  let [buttonState, setButtonState] = useState(false);
 
   useEffect(() => {}, []);
 
@@ -29,42 +32,44 @@ function App() {
               <Banner />
               <SortingButton product={data} setProduct={setProduct} />
               <ProductList product={product} />
+
               <button
+                disabled={buttonState}
                 onClick={() => {
-                  axios
-                    .get("https://codingapple1.github.io/shop/data2.json")
-                    .then((res) => res.data)
-                    .then((res) => {
-                      let copy = [...product];
-                      res.forEach((item) => {
-                        item.title = `시루${item.id}`;
-                        item.content = `시루특공대 넘버${item.id}`;
-                        item.price = Number(`${item.id}0000`);
+                  console.log(count);
 
-                        copy.push(item);
+                  function ajax(i) {
+                    axios
+                      .get(`https://codingapple1.github.io/shop/data${i}.json`)
+                      // .finally(() => alert("로딩 중"))
+                      .then((res) => res.data)
+                      .then((res) => {
+                        let copy = [...product];
+                        res.forEach((item) => {
+                          item.title = `시루${item.id}`;
+                          item.content = `시루특공대 넘버${item.id}`;
+                          item.price = Number(`${item.id}0000`);
 
-                        setProduct(copy);
+                          copy.push(item);
+
+                          setProduct(copy);
+                        });
                       });
-                    });
-
-                  // fetch("https://codingapple1.github.io/shop/data2.json")
-                  //   .then((res) => res.json())
-                  //   .then((res) => {
-                  //     let copy = [...product];
-                  //     res.forEach((item) => {
-                  //       item.title = `시루${item.id}`;
-                  //       item.content = `시루특공대 넘버${item.id}`;
-                  //       item.price = Number(`${item.id}0000`);
-
-                  //       copy.push(item);
-
-                  //       setProduct(copy);
-                  //   });
-                  // });
+                  }
+                  if (count === 0) {
+                    ajax(2);
+                    setCount(count + 1);
+                  } else if (count === 1) {
+                    ajax(3);
+                    setCount(0);
+                    buttonState = "disabled";
+                    setButtonState(true);
+                  }
                 }}
               >
-                버튼
+                {buttonName}
               </button>
+              {buttonState ? <div>이제 없음!</div> : null}
             </>
           }
         />
